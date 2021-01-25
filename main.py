@@ -58,11 +58,12 @@ if __name__=='__main__':
     parser.add_argument('--rfestep', type=int, default = 0.005, help ='Set rfe step')
     parser.add_argument('--standardize', type=str, default = 'Standard', help ='Choice standardize method')
     parser.add_argument('--normalize', type=str, default = 'Nomalizer', help ='Choice normalize method')
+    parser.add_argument('--dataload', type=int, default = 1, help = 'Choice data loading method')
     
     args = parser.parse_args()
 
 # save argument
-json.dump(vars(args), open(os.path.join(args.savedir,'arguments.json'),'w'))
+json.dump(vars(args), open(os.path.join(args.savedir,f'arguments{args.seed}.json'),'w'))
 
 models = {
    "Ran":RandomForestClassifier(),
@@ -86,7 +87,7 @@ results_val = []
 skf = StratifiedKFold(n_splits = args.kfold, shuffle = True, random_state = args.seed)
 
 i = 0
-X, y_target = dataloader(args.datadir)
+X, y_target = dataloader(args.datadir, args.dataload)
 
 for train_idx,val_idx in skf.split(X,y_target):
   for model_name, model in tqdm(models.items()):
