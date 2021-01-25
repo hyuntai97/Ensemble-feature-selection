@@ -6,15 +6,6 @@ from sklearn.preprocessing import MinMaxScaler
 import pandas as pd
 import numpy as np 
 
-from xgboost import XGBClassifier
-from lightgbm import LGBMClassifier
-from sklearn.ensemble import GradientBoostingClassifier
-from sklearn.ensemble import ExtraTreesClassifier
-from sklearn.ensemble import AdaBoostClassifier
-from sklearn.gaussian_process import GaussianProcessClassifier
-from sklearn.naive_bayes import GaussianNB
-from sklearn.ensemble import BaggingClassifier
-from sklearn.ensemble import VotingClassifier
 
 
 # 표준화

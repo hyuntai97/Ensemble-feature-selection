@@ -8,7 +8,7 @@ import pandas as pd
 import warnings
 warnings.filterwarnings(action='ignore')
 
-from tqdm import tqdm_notebook
+from tqdm import tqdm, notebook
 
 import pandas as pd
 import numpy as np 
@@ -19,7 +19,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 
 from xgboost import XGBClassifier
-from lightgbm import LGBMClassifier
+#from lightgbm import LGBMClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.ensemble import AdaBoostClassifier
@@ -66,13 +66,13 @@ json.dump(vars(args), open(os.path.join(args.savedir,'arguments.json'),'w'))
 
 models = {
    "Ran":RandomForestClassifier(),
-   #"KNN":KNeighborsClassifier(),
-   #"Log":LogisticRegression(),
+   "KNN":KNeighborsClassifier(),
+   "Log":LogisticRegression(),
    #"SVC":SVC(probability=True),
    #"Ada":AdaBoostClassifier(),
    #"GNB":GaussianNB(),
    #"Bag":BaggingClassifier(),
-   "XGB":XGBClassifier(),
+   #"XGB":XGBClassifier(),
    #"LGB":LGBMClassifier()
 }
 
@@ -89,7 +89,7 @@ i = 0
 X, y_target = dataloader(args.datadir)
 
 for train_idx,val_idx in skf.split(X,y_target):
-  for model_name, model in tqdm_notebook(models.items()):
+  for model_name, model in tqdm(models.items()):
 
     x_train = X.iloc[train_idx, :]
     y_train = y_target.iloc[train_idx]
@@ -125,4 +125,4 @@ for train_idx,val_idx in skf.split(X,y_target):
   i += 1
 
 df_results = pd.DataFrame(data = results_val, columns = ['iter','val_acc','model'])
-pickle.dump(df_results, open(os.path.join(args.savedir, f'validation_results.pkl'),'wb'))
+pickle.dump(df_results, open(os.path.join(args.savedir, f'validation_results{args.seed}.pkl'),'wb'))
