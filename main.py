@@ -63,12 +63,12 @@ if __name__=='__main__':
     args = parser.parse_args()
 
 # save argument
-json.dump(vars(args), open(os.path.join(args.savedir,f'arguments{args.seed}.json'),'w'))
+json.dump(vars(args), open(os.path.join(args.savedir,f'arguments{args.seed}_{args.fsmethod}.json'),'w'))
 
 models = {
    "Ran":RandomForestClassifier(),
-   "KNN":KNeighborsClassifier(),
-   "Log":LogisticRegression(),
+   #"KNN":KNeighborsClassifier(),
+   #"Log":LogisticRegression(),
    #"SVC":SVC(probability=True),
    #"Ada":AdaBoostClassifier(),
    #"GNB":GaussianNB(),
@@ -126,4 +126,5 @@ for train_idx,val_idx in skf.split(X,y_target):
   i += 1
 
 df_results = pd.DataFrame(data = results_val, columns = ['iter','val_acc','model'])
-pickle.dump(df_results, open(os.path.join(args.savedir, f'validation_results{args.seed}.pkl'),'wb'))
+pickle.dump(df_results, open(os.path.join(args.logdir, f'validation_results{args.seed}_{args.fsmethod}.pkl'),'wb'))
+
