@@ -1,4 +1,3 @@
-from sklearn.datasets import load_iris
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2, f_regression, f_classif
 from sklearn.ensemble import ExtraTreesClassifier
@@ -22,10 +21,13 @@ from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import BaggingClassifier
 from sklearn.ensemble import VotingClassifier
+from sklearn.tree import DecisionTreeClassifier
+
+from ensemble import ensemble_model
 
 
 # feature select
-def feature_select(fsmethod , featurenum , rfestep,x_train = None, y_train =None, x_val = None):
+def feature_select(fsmethod , featurenum , rfestep,  x_train = None, y_train =None, x_val = None):
     if fsmethod == 'SelectKBest':
         selector = SelectKBest(score_func = f_classif, k = featurenum)
         selector.fit(x_train, y_train)
@@ -78,6 +80,13 @@ def feature_select(fsmethod , featurenum , rfestep,x_train = None, y_train =None
         x_val_new = principal.transform(x_val)
         x_train = pd.DataFrame(x_train_new, index = x_train_index)
         x_val = pd.DataFrame(x_val_new, index = x_val_index)
+    
+    # feature select ensemble method
+    if fsmethod == 'ensemble':
+        rank_high_idx = ensemble_model(x_train, y_train)
+        x_train = x_train.loc[:, rank_high_idx]
+        x_val = x_val.loc[:, rank_high_idx]
+  
 
     return x_train, x_val 
 

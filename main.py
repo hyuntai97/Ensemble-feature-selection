@@ -59,6 +59,7 @@ if __name__=='__main__':
     parser.add_argument('--standardize', type=str, default = 'Standard', help ='Choice standardize method')
     parser.add_argument('--normalize', type=str, default = 'Nomalizer', help ='Choice normalize method')
     parser.add_argument('--dataload', type=int, default = 1, help = 'Choice data loading method')
+    parser.add_argument('--ensemble', type=int, default = 1, help = 'Choice feature selection ensemble method')
     
     args = parser.parse_args()
 
@@ -99,7 +100,7 @@ for train_idx,val_idx in skf.split(X,y_target):
     y_val = y_target.iloc[val_idx]
 
     # feature standardize
-    x_train, x_val = standardize_select(args.standardize,x_train, x_val)
+    #x_train, x_val = standardize_select(args.standardize,x_train, x_val)
 
     # feature select
     x_train, x_val = feature_select(args.fsmethod ,args.featurenum , args.rfestep, x_train, y_train, x_val)
