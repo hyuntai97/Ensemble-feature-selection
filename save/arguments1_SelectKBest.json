@@ -1,1 +1,1 @@
-{"seed": 1, "datadir": "./data", "logdir": "./logs", "savedir": "./save", "paramdir": "./params", "kfold": 5, "fsmethod": "SelectKBest", "featurenum": 100, "rfestep": 0.005, "standardize": "Standard", "normalize": "Nomalizer", "dataload": 1, "ensemble": 1}
+{"seed": 1, "datadir": "./data", "logdir": "./logs", "savedir": "./save", "paramdir": "./params", "kfold": 5, "fsmethod": "SelectKBest", "featurenum": 100, "rfestep": 0.005, "standardize": "Standard", "normalize": "Normalizer", "dataload": 1}

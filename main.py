@@ -57,9 +57,9 @@ if __name__=='__main__':
     parser.add_argument('--featurenum', type=int, default =100, help ='Set feature selected number')
     parser.add_argument('--rfestep', type=int, default = 0.005, help ='Set rfe step')
     parser.add_argument('--standardize', type=str, default = 'Standard', help ='Choice standardize method')
-    parser.add_argument('--normalize', type=str, default = 'Nomalizer', help ='Choice normalize method')
+    parser.add_argument('--normalize', type=str, default = 'Normalizer', help ='Choice normalize method')
     parser.add_argument('--dataload', type=int, default = 1, help = 'Choice data loading method')
-    parser.add_argument('--ensemble', type=int, default = 1, help = 'Choice feature selection ensemble method')
+    #parser.add_argument('--ensemble', type=int, default = 1, help = 'Choice feature selection ensemble method')
     
     args = parser.parse_args()
 
@@ -78,6 +78,8 @@ models = {
    #"LGB":LGBMClassifier()
 }
 
+for model_name in models.keys():
+  model_ = model_name
 
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import accuracy_score
@@ -103,7 +105,7 @@ for train_idx,val_idx in skf.split(X,y_target):
     #x_train, x_val = standardize_select(args.standardize,x_train, x_val)
 
     # feature select
-    x_train, x_val = feature_select(args.fsmethod ,args.featurenum , args.rfestep, x_train, y_train, x_val)
+    x_train, x_val = feature_select(args.fsmethod ,args.featurenum , args.rfestep, args.seed, x_train, y_train, x_val)
     
     # outlier replace
     x_train, x_val = replace_outlier(x_train, x_val)
@@ -127,5 +129,5 @@ for train_idx,val_idx in skf.split(X,y_target):
   i += 1
 
 df_results = pd.DataFrame(data = results_val, columns = ['iter','val_acc','model'])
-pickle.dump(df_results, open(os.path.join(args.logdir, f'validation_results{args.seed}_{args.fsmethod}.pkl'),'wb'))
+pickle.dump(df_results, open(os.path.join(args.logdir, f'validation_results{args.seed}_{args.fsmethod}_{model_}.pkl'),'wb'))
 
