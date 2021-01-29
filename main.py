@@ -63,9 +63,6 @@ if __name__=='__main__':
     
     args = parser.parse_args()
 
-# save argument
-json.dump(vars(args), open(os.path.join(args.savedir,f'arguments{args.seed}_{args.fsmethod}.json'),'w'))
-
 models = {
    "Ran":RandomForestClassifier(),
    #"KNN":KNeighborsClassifier(),
@@ -80,6 +77,9 @@ models = {
 
 for model_name in models.keys():
   model_ = model_name
+
+# save argument
+json.dump(vars(args), open(os.path.join(args.savedir,f'arguments{args.seed}_{args.fsmethod}_{model_}.json'),'w'))
 
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import accuracy_score
