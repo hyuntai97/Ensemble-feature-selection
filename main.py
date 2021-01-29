@@ -69,8 +69,8 @@ models = {
    #"Log":LogisticRegression(),
    #"SVC":SVC(probability=True),
    #"Ada":AdaBoostClassifier(),
-   #"GNB":GaussianNB(),
-   "Bag":BaggingClassifier(),
+   "GNB":GaussianNB(),
+   #"Bag":BaggingClassifier(),
    #"XGB":XGBClassifier(),
    #"LGB":LGBMClassifier()
 }
