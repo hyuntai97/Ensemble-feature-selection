@@ -55,7 +55,7 @@ if __name__=='__main__':
     #                     help='Choice machine learning model')
     parser.add_argument('--fsmethod', type=str, default ='SelectKBest', help ='Choice feature select method')
     parser.add_argument('--featurenum', type=int, default =100, help ='Set feature selected number')
-    parser.add_argument('--rfestep', type=int, default = 0.005, help ='Set rfe step')
+    parser.add_argument('--rfestep', type=float, default = 0.005, help ='Set rfe step')
     parser.add_argument('--standardize', type=str, default = 'Standard', help ='Choice standardize method')
     parser.add_argument('--normalize', type=str, default = 'Normalizer', help ='Choice normalize method')
     parser.add_argument('--dataload', type=int, default = 1, help = 'Choice data loading method')
@@ -64,13 +64,13 @@ if __name__=='__main__':
     args = parser.parse_args()
 
 models = {
-   "Ran":RandomForestClassifier(),
+   #"Ran":RandomForestClassifier(),
    #"KNN":KNeighborsClassifier(),
    #"Log":LogisticRegression(),
    #"SVC":SVC(probability=True),
    #"Ada":AdaBoostClassifier(),
    #"GNB":GaussianNB(),
-   #"Bag":BaggingClassifier(),
+   "Bag":BaggingClassifier(),
    #"XGB":XGBClassifier(),
    #"LGB":LGBMClassifier()
 }
