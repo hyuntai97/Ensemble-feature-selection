@@ -1,7 +1,7 @@
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2, f_regression, f_classif
 from sklearn import preprocessing
-
+from sklearn.feature_selection import RFE
 import pandas as pd
 import numpy as np 
 from sklearn.ensemble import ExtraTreesClassifier
@@ -20,10 +20,17 @@ from sklearn.ensemble import BaggingClassifier
 from sklearn.ensemble import VotingClassifier
 from sklearn.tree import DecisionTreeClassifier
 
-def ensemble_model(featurenum, seed, x_train = None, y_train = None):
+def ensemble_model(n_estimators, featurenum, seed, x_train = None, y_train = None):
     rank_lst = []
-    fs_model_tree = [DecisionTreeClassifier(random_state = seed), RandomForestClassifier(random_state = seed), ExtraTreesClassifier(random_state = seed)]
+    fs_model_tree = [DecisionTreeClassifier(random_state = seed), 
+                    RandomForestClassifier(random_state = seed, n_estimators = n_estimators),
+                    ExtraTreesClassifier(random_state = seed, n_estimators = n_estimators)]
+
     fs_model_kb = [SelectKBest(chi2, k = 'all'), SelectKBest(f_classif, k = 'all')]
+
+    fs_model_rfe = [RFE(RandomForestClassifier(random_state = seed), n_features_to_select=1000, step=0.1),
+                    RFE(LogisticRegression(random_state = seed), n_features_to_select=1000, step = 0.1), 
+                    RFE(DecisionTreeClassifier(random_state = seed), n_features_to_select=1000, step=0.1)]
 
     for fs in fs_model_tree:
         model = fs
@@ -40,6 +47,14 @@ def ensemble_model(featurenum, seed, x_train = None, y_train = None):
         importances_series = pd.Series(importances)
         rank = importances_series.rank(ascending = False, method = 'min')
         rank_lst.append(rank)
+
+    for fs in fs_model_rfe:
+        rfe = fs
+        rfe.fit(x_train, y_train)
+        rank = rfe.ranking_
+        rank_series = pd.Series(rank)
+        rank_lst.append(rank_series)
+
 
     rank_df = pd.concat(rank_lst, axis = 1)
     rank_df['mean'] = rank_df.mean(axis = 1)

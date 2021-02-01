@@ -27,7 +27,7 @@ from ensemble import ensemble_model
 
 
 # feature select
-def feature_select(fsmethod , featurenum , rfestep, seed, x_train = None, y_train =None, x_val = None):
+def feature_select(fsmethod , featurenum , rfestep, seed, n_estimators, x_train = None, y_train =None, x_val = None):
     if fsmethod == 'SelectKBest':
         selector = SelectKBest(score_func = f_classif, k = featurenum)
         selector.fit(x_train, y_train)
@@ -83,7 +83,7 @@ def feature_select(fsmethod , featurenum , rfestep, seed, x_train = None, y_trai
     
     # feature select ensemble method
     if fsmethod == 'ensemble':
-        rank_high_idx = ensemble_model(featurenum, seed, x_train, y_train)
+        rank_high_idx = ensemble_model(n_estimators, featurenum, seed, x_train, y_train)
         x_train = x_train.loc[:, rank_high_idx]
         x_val = x_val.loc[:, rank_high_idx]
   
