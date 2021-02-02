@@ -52,6 +52,8 @@ def feature_select(fsmethod , featurenum , rfestep, seed, n_estimators, x_train 
         x_train = x_train.iloc[:, importances_high_lst]
         x_val = x_val.iloc[:, importances_high_lst]
 
+        selected_columns = x_train.columns[importances_high_lst]
+
     if fsmethod == 'rfe':
         model_lr = LogisticRegression()
         #model_rf = RandomForestClassifier()
@@ -61,6 +63,7 @@ def feature_select(fsmethod , featurenum , rfestep, seed, n_estimators, x_train 
         selected_columns = x_train.columns[selected_mask]
         x_train = x_train.loc[:, selected_columns]
         x_val = x_val.loc[:, selected_columns]
+
 
     if fsmethod == 'pca':
         # pca 전 데이터 정규화   
@@ -86,9 +89,10 @@ def feature_select(fsmethod , featurenum , rfestep, seed, n_estimators, x_train 
         rank_high_idx = ensemble_model(n_estimators, featurenum, seed, x_train, y_train)
         x_train = x_train.loc[:, rank_high_idx]
         x_val = x_val.loc[:, rank_high_idx]
-  
 
-    return x_train, x_val 
+        selected_columns = rank_high_idx
+
+    return x_train, x_val , selected_columns
 
 
 from sklearn.preprocessing import StandardScaler

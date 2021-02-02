@@ -61,16 +61,17 @@ if __name__=='__main__':
     parser.add_argument('--dataload', type=int, default = 1, help = 'Choice data loading method')
     #parser.add_argument('--ensemble', type=int, default = 1, help = 'Choice feature selection ensemble method')
     parser.add_argument('--n_estimators', type=int, default=100, help = 'Set The number of trees in the forest')
+    parser.add_argument('--colsdir', type=str, default='./cols', help='Set selected columns save directory')
 
     args = parser.parse_args()
 
 models = {
-   #"Ran":RandomForestClassifier(),
+   "Ran":RandomForestClassifier(),
    #"KNN":KNeighborsClassifier(),
    #"Log":LogisticRegression(),
    #"SVC":SVC(probability=True),
    #"Ada":AdaBoostClassifier(),
-   "GNB":GaussianNB(),
+   #"GNB":GaussianNB(),
    #"Bag":BaggingClassifier(),
    #"XGB":XGBClassifier(),
    #"LGB":LGBMClassifier()
@@ -87,7 +88,7 @@ from sklearn.metrics import accuracy_score
 
 
 results_val = []
-
+selected_cols_dict = {}
 skf = StratifiedKFold(n_splits = args.kfold, shuffle = True, random_state = args.seed)
 
 i = 0
@@ -106,7 +107,7 @@ for train_idx,val_idx in skf.split(X,y_target):
     #x_train, x_val = standardize_select(args.standardize,x_train, x_val)
 
     # feature select
-    x_train, x_val = feature_select(args.fsmethod ,args.featurenum , args.rfestep, args.seed, args.n_estimators , x_train, y_train, x_val)
+    x_train, x_val, selected_columns = feature_select(args.fsmethod ,args.featurenum , args.rfestep, args.seed, args.n_estimators , x_train, y_train, x_val)
     
     # outlier replace
     x_train, x_val = replace_outlier(x_train, x_val)
@@ -125,9 +126,14 @@ for train_idx,val_idx in skf.split(X,y_target):
     y_pred_val = model.predict(x_val)
     accuracy_val = accuracy_score(y_val, y_pred_val)
     results_val.append([i,accuracy_val, model_name])
-   
+    
+    # selected columns
+    selected_cols_dict[i] = selected_columns
   
   i += 1
+
+df_cols = pd.DataFrame(selected_cols_dict)
+pickle.dump(df_cols, open(os.path.join(args.colsdir, f'selected_cols{args.seed}_{args.fsmethod}_{model_}.pkl'),'wb'))
 
 df_results = pd.DataFrame(data = results_val, columns = ['iter','val_acc','model'])
 pickle.dump(df_results, open(os.path.join(args.logdir, f'validation_results{args.seed}_{args.fsmethod}_{model_}.pkl'),'wb'))
