@@ -4,6 +4,7 @@ from sklearn import preprocessing
 from sklearn.feature_selection import RFE
 import pandas as pd
 import numpy as np 
+import shap
 from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
@@ -32,6 +33,8 @@ def ensemble_model(n_estimators, featurenum, seed, x_train = None, y_train = Non
                     RFE(LogisticRegression(random_state = seed), n_features_to_select=1000, step = 0.1), 
                     RFE(DecisionTreeClassifier(random_state = seed), n_features_to_select=1000, step=0.1)]
 
+    fs_model_shap = [RandomForestClassifier(random_state = seed, n_estimators = n_estimators)]
+
     for fs in fs_model_tree:
         model = fs
         model.fit(x_train, y_train)
@@ -54,8 +57,19 @@ def ensemble_model(n_estimators, featurenum, seed, x_train = None, y_train = Non
         rank = rfe.ranking_
         rank_series = pd.Series(rank)
         rank_lst.append(rank_series)
+        
+    for fs in fs_model_shap:
+        model = fs
+        model.fit(x_train, y_train)
+        explainer = shap.TreeExplainer(model)
+        shap_values = explainer.shap_values(x_train)
+        shap_values_mat = np.abs(shap_values[1])
+        shap_mean = np.mean(shap_values_mat, axis = 0)
+        importances_series = pd.Series(shap_mean)
+        rank = importances_series.rank(ascending = False, method = 'min')
+        rank_lst.append(rank)
 
-
+    
     rank_df = pd.concat(rank_lst, axis = 1)
     rank_df['mean'] = rank_df.mean(axis = 1)
     rank_sort = np.sort(rank_df['mean'])

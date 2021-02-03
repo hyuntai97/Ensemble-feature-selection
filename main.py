@@ -7,7 +7,7 @@ import pandas as pd
 
 import warnings
 warnings.filterwarnings(action='ignore')
-
+import shap
 from tqdm import tqdm, notebook
 
 import pandas as pd
@@ -66,9 +66,9 @@ if __name__=='__main__':
     args = parser.parse_args()
 
 models = {
-   "Ran":RandomForestClassifier(),
+   #"Ran":RandomForestClassifier(),
    #"KNN":KNeighborsClassifier(),
-   #"Log":LogisticRegression(),
+   "Log":LogisticRegression(),
    #"SVC":SVC(probability=True),
    #"Ada":AdaBoostClassifier(),
    #"GNB":GaussianNB(),

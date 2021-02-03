@@ -4,7 +4,7 @@ from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.feature_selection import RFE
 from sklearn import preprocessing
 from sklearn.decomposition import PCA
-
+import shap
 import pandas as pd
 import numpy as np 
 from sklearn.preprocessing import StandardScaler
@@ -40,8 +40,8 @@ def feature_select(fsmethod , featurenum , rfestep, seed, n_estimators, x_train 
         x_val = x_val.loc[:, selected_columns]
 
     if fsmethod == 'feature_importances':
-        model = ExtraTreesClassifier()
-        # model = RandomForestClassifier()
+        #model = ExtraTreesClassifier()
+        model = RandomForestClassifier(n_estimators = n_estimators, random_state = seed)
         model.fit(x_train, y_train)
         importances = model.feature_importances_
         importances_sort = np.sort(importances)
@@ -49,10 +49,11 @@ def feature_select(fsmethod , featurenum , rfestep, seed, n_estimators, x_train 
         for i in range(len(importances)):
             if importances[i] > importances_sort[-featurenum-1]:
                 importances_high_lst.append(i)
+        selected_columns = x_train.columns[importances_high_lst]
         x_train = x_train.iloc[:, importances_high_lst]
         x_val = x_val.iloc[:, importances_high_lst]
 
-        selected_columns = x_train.columns[importances_high_lst]
+        
 
     if fsmethod == 'rfe':
         model_lr = LogisticRegression()
@@ -83,7 +84,40 @@ def feature_select(fsmethod , featurenum , rfestep, seed, n_estimators, x_train 
         x_val_new = principal.transform(x_val)
         x_train = pd.DataFrame(x_train_new, index = x_train_index)
         x_val = pd.DataFrame(x_val_new, index = x_val_index)
-    
+
+    if fsmethod == 'shap1':
+        model = RandomForestClassifier(n_estimators = n_estimators, random_state = seed)
+        model.fit(x_train, y_train)
+        explainer = shap.TreeExplainer(model)
+        shap_values = explainer.shap_values(x_train)
+        shap_values_mat = np.abs(shap_values[1])
+        shap_mean = np.mean(shap_values_mat, axis = 0)
+        shap_mean_sort = np.sort(shap_mean)
+        importances_high_lst = []
+        for i in range(len(shap_mean)):
+            if shap_mean[i] > shap_mean_sort[-featurenum-1]:
+                importances_high_lst.append(i)
+        selected_columns = x_train.columns[importances_high_lst]
+        x_train = x_train.iloc[:, importances_high_lst]
+        x_val = x_val.iloc[:, importances_high_lst]
+
+    if fsmethod == 'shap2':
+        model = DecisionTreeClassifier(random_state = seed)
+        model.fit(x_train, y_train)
+        explainer = shap.TreeExplainer(model)
+        shap_values = explainer.shap_values(x_train)
+        shap_values_mat = np.abs(shap_values[1])
+        shap_mean = np.mean(shap_values_mat, axis = 0)
+        shap_mean_sort = np.sort(shap_mean)
+        importances_high_lst = []
+        for i in range(len(shap_mean)):
+            if shap_mean[i] > shap_mean_sort[-featurenum-1]:
+                importances_high_lst.append(i)
+        selected_columns = x_train.columns[importances_high_lst]
+        x_train = x_train.iloc[:, importances_high_lst]
+        x_val = x_val.iloc[:, importances_high_lst]
+        
+
     # feature select ensemble method
     if fsmethod == 'ensemble':
         rank_high_idx = ensemble_model(n_estimators, featurenum, seed, x_train, y_train)
