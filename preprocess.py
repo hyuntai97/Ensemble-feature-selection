@@ -22,12 +22,14 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import BaggingClassifier
 from sklearn.ensemble import VotingClassifier
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.linear_model import Lasso, LogisticRegression
+from sklearn.feature_selection import SelectFromModel
 
 from ensemble import ensemble_model
 
 
 # feature select
-def feature_select(fsmethod , featurenum , rfestep, seed, n_estimators, x_train = None, y_train =None, x_val = None):
+def feature_select(fsmethod , featurenum , rfestep, seed, n_estimators, regularization_, x_train = None, y_train =None, x_val = None):
     if fsmethod == 'SelectKBest':
         selector = SelectKBest(score_func = f_classif, k = featurenum)
         selector.fit(x_train, y_train)
@@ -116,7 +118,20 @@ def feature_select(fsmethod , featurenum , rfestep, seed, n_estimators, x_train 
         selected_columns = x_train.columns[importances_high_lst]
         x_train = x_train.iloc[:, importances_high_lst]
         x_val = x_val.iloc[:, importances_high_lst]
+
+    if fsmethod == 'regularizaion':  # l1 regularization
+        if regularization_ == 'l1':
+            select_model = SelectFromModel(LogisticRegression(C = 1,penalty = 'l1',solver = 'liblinear'), random_state = seed, max_features = featurenum)
+        elif regularization_ == 'l2':
+            select_model = SelectFromModel(LogisticRegression(C = 1,penalty = 'l1',solver = 'liblinear'), random_state = seed, max_features = featurenum)
+        elif regularization_ == 'elasticnet':
+            select_model = SelectFromModel(LogisticRegression( penalty = 'elasticnet',solver = 'saga',l1_ratio = 0.5), max_features = featurenum)
         
+        select_model.fit(x_train, y_train)
+        selected_mask = select_model.get_support()
+        selected_columns = x_train.columns[selected_mask]
+        x_train = x_train.loc[:, selected_columns]
+        x_val = x_val.loc[:, selected_columns]
 
     # feature select ensemble method
     if fsmethod == 'ensemble':

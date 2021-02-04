@@ -33,7 +33,8 @@ def ensemble_model(n_estimators, featurenum, seed, x_train = None, y_train = Non
                     RFE(LogisticRegression(random_state = seed), n_features_to_select=1000, step = 0.1), 
                     RFE(DecisionTreeClassifier(random_state = seed), n_features_to_select=1000, step=0.1)]
 
-    fs_model_shap = [RandomForestClassifier(random_state = seed, n_estimators = n_estimators)]
+    fs_model_shap = [RandomForestClassifier(random_state = seed, n_estimators = n_estimators),
+                    DecisionTreeClassifier(random_state = seed)]
 
     for fs in fs_model_tree:
         model = fs
