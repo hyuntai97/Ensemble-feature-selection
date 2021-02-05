@@ -24,7 +24,7 @@ from sklearn.feature_selection import SelectFromModel
 
 def ensemble_model(n_estimators, featurenum, seed, x_train = None, y_train = None):
     rank_lst = []
-    fs_model_tree = [DecisionTreeClassifier(random_state = seed), 
+    fs_model_tree = [#DecisionTreeClassifier(random_state = seed), 
                     RandomForestClassifier(random_state = seed, n_estimators = n_estimators),
                     ExtraTreesClassifier(random_state = seed, n_estimators = n_estimators)]
 
