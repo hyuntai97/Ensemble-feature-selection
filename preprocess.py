@@ -29,7 +29,7 @@ from ensemble import ensemble_model
 
 
 # feature select
-def feature_select(fsmethod , featurenum , rfestep, seed, n_estimators, regularization_, x_train = None, y_train =None, x_val = None):
+def feature_select(fsmethod , featurenum , rfestep, seed, n_estimators, x_train = None, y_train =None, x_val = None):
     if fsmethod == 'SelectKBest':
         selector = SelectKBest(score_func = f_classif, k = featurenum)
         selector.fit(x_train, y_train)
@@ -56,7 +56,6 @@ def feature_select(fsmethod , featurenum , rfestep, seed, n_estimators, regulari
         x_val = x_val.iloc[:, importances_high_lst]
 
         
-
     if fsmethod == 'rfe':
         model_lr = LogisticRegression()
         #model_rf = RandomForestClassifier()
@@ -87,6 +86,7 @@ def feature_select(fsmethod , featurenum , rfestep, seed, n_estimators, regulari
         x_train = pd.DataFrame(x_train_new, index = x_train_index)
         x_val = pd.DataFrame(x_val_new, index = x_val_index)
 
+    # shap feature selection method
     if fsmethod == 'shap1':
         model = RandomForestClassifier(n_estimators = n_estimators, random_state = seed)
         model.fit(x_train, y_train)
@@ -119,20 +119,33 @@ def feature_select(fsmethod , featurenum , rfestep, seed, n_estimators, regulari
         x_train = x_train.iloc[:, importances_high_lst]
         x_val = x_val.iloc[:, importances_high_lst]
 
-    if fsmethod == 'regularizaion':  # l1 regularization
-        if regularization_ == 'l1':
-            select_model = SelectFromModel(LogisticRegression(C = 1,penalty = 'l1',solver = 'liblinear'), random_state = seed, max_features = featurenum)
-        elif regularization_ == 'l2':
-            select_model = SelectFromModel(LogisticRegression(C = 1,penalty = 'l1',solver = 'liblinear'), random_state = seed, max_features = featurenum)
-        elif regularization_ == 'elasticnet':
-            select_model = SelectFromModel(LogisticRegression( penalty = 'elasticnet',solver = 'saga',l1_ratio = 0.5), max_features = featurenum)
-        
+    
+    # feature select regularization method
+    if fsmethod == 'regularization_l1':
+        select_model = SelectFromModel(LogisticRegression(C = 1,penalty = 'l1',solver = 'liblinear'), max_features = featurenum)
         select_model.fit(x_train, y_train)
         selected_mask = select_model.get_support()
         selected_columns = x_train.columns[selected_mask]
         x_train = x_train.loc[:, selected_columns]
         x_val = x_val.loc[:, selected_columns]
 
+    if fsmethod == 'regularization_l2':
+        select_model = SelectFromModel(LogisticRegression(C = 1,penalty = 'l2',solver = 'liblinear'), max_features = featurenum)
+        select_model.fit(x_train, y_train)
+        selected_mask = select_model.get_support()
+        selected_columns = x_train.columns[selected_mask]
+        x_train = x_train.loc[:, selected_columns]
+        x_val = x_val.loc[:, selected_columns]
+
+    if fsmethod == 'regularization_elastic':
+        select_model = SelectFromModel(LogisticRegression( penalty = 'elasticnet',solver = 'saga',l1_ratio = 0.5), max_features = featurenum)
+        select_model.fit(x_train, y_train)
+        selected_mask = select_model.get_support()
+        selected_columns = x_train.columns[selected_mask]
+        x_train = x_train.loc[:, selected_columns]
+        x_val = x_val.loc[:, selected_columns]
+
+    
     # feature select ensemble method
     if fsmethod == 'ensemble':
         rank_high_idx = ensemble_model(n_estimators, featurenum, seed, x_train, y_train)

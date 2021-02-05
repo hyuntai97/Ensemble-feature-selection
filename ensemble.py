@@ -20,6 +20,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import BaggingClassifier
 from sklearn.ensemble import VotingClassifier
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.feature_selection import SelectFromModel
 
 def ensemble_model(n_estimators, featurenum, seed, x_train = None, y_train = None):
     rank_lst = []
@@ -35,6 +36,10 @@ def ensemble_model(n_estimators, featurenum, seed, x_train = None, y_train = Non
 
     fs_model_shap = [RandomForestClassifier(random_state = seed, n_estimators = n_estimators),
                     DecisionTreeClassifier(random_state = seed)]
+
+    fs_model_regular = [SelectFromModel(LogisticRegression(C = 1,penalty = 'l1',solver = 'liblinear'), max_features = featurenum),
+                        SelectFromModel(LogisticRegression(C = 1,penalty = 'l2',solver = 'liblinear'), max_features = featurenum),
+                        SelectFromModel(LogisticRegression( penalty = 'elasticnet',solver = 'saga', l1_ratio = 0.5), max_features = featurenum)]
 
     for fs in fs_model_tree:
         model = fs
@@ -70,6 +75,14 @@ def ensemble_model(n_estimators, featurenum, seed, x_train = None, y_train = Non
         rank = importances_series.rank(ascending = False, method = 'min')
         rank_lst.append(rank)
 
+    for fs in fs_model_regular:
+        select_model = fs
+        select_model.fit(x_train, y_train)
+        importances = np.abs(select_model.estimator_.coef_)[0]
+        importances_series = pd.Series(importances)
+        rank = importances_series.rank(ascending = False, method = 'min')
+        rank_lst.append(rank)
+        
     
     rank_df = pd.concat(rank_lst, axis = 1)
     rank_df['mean'] = rank_df.mean(axis = 1)
