@@ -24,7 +24,7 @@ from sklearn.ensemble import VotingClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import Lasso, LogisticRegression
 from sklearn.feature_selection import SelectFromModel
-
+from ensemble2 import ensemble_model2
 from ensemble import ensemble_model
 
 
@@ -153,6 +153,14 @@ def feature_select(fsmethod , featurenum , rfestep, seed, n_estimators, x_train 
         x_val = x_val.loc[:, rank_high_idx]
 
         selected_columns = rank_high_idx
+
+    if fsmethod == 'ensemble2':
+        frequent_high_idx = ensemble_model2(n_estimators, featurenum, seed, x_train, y_train)
+        x_train = x_train.loc[:, frequent_high_idx]
+        x_val = x_val.loc[:, frequent_high_idx]
+
+        selected_columns = frequent_high_idx
+
 
     return x_train, x_val , selected_columns
 
