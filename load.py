@@ -41,4 +41,3 @@ def dataloader(datadir,dataload):
         
         
     return X, y_target
-

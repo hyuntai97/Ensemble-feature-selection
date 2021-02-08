@@ -87,13 +87,13 @@ def ensemble_model(n_estimators, featurenum, seed, x_train = None, y_train = Non
     rank_df = pd.concat(rank_lst, axis = 1)
     rank_df['mean'] = rank_df.mean(axis = 1)
     rank_sort = np.sort(rank_df['mean'])
-            
+    
     rank_high_index = []
     for i in rank_df.index:
         if rank_df.loc[i,'mean'] < rank_sort[featurenum]:
             rank_high_index.append(i)
-        
-    rank_high_idx = x_train.columns[rank_high_index]
+    selected_columns_lst = sorted(rank_high_index, key = lambda x: rank_df.loc[x,'mean'])
+    rank_high_idx = x_train.columns[selected_columns_lst]
     
     return rank_high_idx
 

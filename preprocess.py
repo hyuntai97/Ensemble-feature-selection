@@ -33,10 +33,16 @@ def feature_select(fsmethod , featurenum , rfestep, seed, n_estimators, x_train 
     if fsmethod == 'SelectKBest':
         selector = SelectKBest(score_func = f_classif, k = featurenum)
         selector.fit(x_train, y_train)
-        #x_train_selected = selector.transform(x_train)
-        #x_test_selected = selector.transform(x_test)
-        selected_mask = selector.get_support()
-        selected_columns = x_train.columns[selected_mask]
+        
+        importances = selector.scores_
+        importances2 = np.nan_to_num(importances) # importance score nan 값 제거
+        importances_sort = np.sort(importances2)
+        importances_high_lst = []
+        for i in range(len(importances2)):
+            if importances2[i] > importances_sort[-featurenum-1]:
+                importances_high_lst.append(i)
+        importances_high_sorted = sorted(importances_high_lst, key = lambda x: importances2[x], reverse = True)
+        selected_columns = x_train.columns[importances_high_sorted]
 
         x_train = x_train.loc[:, selected_columns]
         x_val = x_val.loc[:, selected_columns]
@@ -51,12 +57,13 @@ def feature_select(fsmethod , featurenum , rfestep, seed, n_estimators, x_train 
         for i in range(len(importances)):
             if importances[i] > importances_sort[-featurenum-1]:
                 importances_high_lst.append(i)
-        selected_columns = x_train.columns[importances_high_lst]
-        x_train = x_train.iloc[:, importances_high_lst]
-        x_val = x_val.iloc[:, importances_high_lst]
+        selected_columns_lst = sorted(importances_high_lst, key = lambda x: importances[x], reverse = True)
+        selected_columns = x_train.columns[selected_columns_lst]
+        x_train = x_train.loc[:, selected_columns]
+        x_val = x_val.loc[:, selected_columns]
 
         
-    if fsmethod == 'rfe':
+    if fsmethod == 'rfe':      # feature importance로 selected feature 정렬 불가능
         model_lr = LogisticRegression()
         #model_rf = RandomForestClassifier()
         select_rfe = RFE(model_lr, n_features_to_select = featurenum, step = rfestep)
@@ -99,9 +106,10 @@ def feature_select(fsmethod , featurenum , rfestep, seed, n_estimators, x_train 
         for i in range(len(shap_mean)):
             if shap_mean[i] > shap_mean_sort[-featurenum-1]:
                 importances_high_lst.append(i)
-        selected_columns = x_train.columns[importances_high_lst]
-        x_train = x_train.iloc[:, importances_high_lst]
-        x_val = x_val.iloc[:, importances_high_lst]
+        selected_columns_lst = sorted(importances_high_lst, key = lambda x: shap_mean[x], reverse = True)
+        selected_columns = x_train.columns[selected_columns_lst]
+        x_train = x_train.loc[:, selected_columns]
+        x_val = x_val.loc[:, selected_columns]
 
     if fsmethod == 'shap2':
         model = DecisionTreeClassifier(random_state = seed)
@@ -115,12 +123,13 @@ def feature_select(fsmethod , featurenum , rfestep, seed, n_estimators, x_train 
         for i in range(len(shap_mean)):
             if shap_mean[i] > shap_mean_sort[-featurenum-1]:
                 importances_high_lst.append(i)
-        selected_columns = x_train.columns[importances_high_lst]
-        x_train = x_train.iloc[:, importances_high_lst]
-        x_val = x_val.iloc[:, importances_high_lst]
+        selected_columns_lst = sorted(importances_high_lst, key = lambda x: shap_mean[x], reverse = True)
+        selected_columns = x_train.columns[selected_columns_lst]
+        x_train = x_train.loc[:, selected_columns]
+        x_val = x_val.loc[:, selected_columns]
 
     
-    # feature select regularization method
+    # feature select regularization method       # feature importance로 selected feature 정렬 불가능
     if fsmethod == 'regularization_l1':
         select_model = SelectFromModel(LogisticRegression(C = 1,penalty = 'l1',solver = 'liblinear'), max_features = featurenum)
         select_model.fit(x_train, y_train)
