@@ -129,28 +129,49 @@ def feature_select(fsmethod , featurenum , rfestep, seed, n_estimators, x_train 
         x_val = x_val.loc[:, selected_columns]
 
     
-    # feature select regularization method       # feature importance로 selected feature 정렬 불가능
+    # feature select regularization method       
     if fsmethod == 'regularization_l1':
         select_model = SelectFromModel(LogisticRegression(C = 1,penalty = 'l1',solver = 'liblinear'), max_features = featurenum)
         select_model.fit(x_train, y_train)
-        selected_mask = select_model.get_support()
-        selected_columns = x_train.columns[selected_mask]
+        importances = np.sum(np.abs(select_model.estimator_.coef_), axis = 0)
+        importances_sort = np.sort(importances)
+        importances_high_lst = []
+        for i in range(len(importances)):
+            if importances[i] > importances_sort[-featurenum-1]:
+                importances_high_lst.append(i)
+        importances_high_sorted = sorted(importances_high_lst, key = lambda x: importances[x], reverse = True)
+        selected_columns = x_train.columns[importances_high_sorted]
+
         x_train = x_train.loc[:, selected_columns]
         x_val = x_val.loc[:, selected_columns]
 
     if fsmethod == 'regularization_l2':
         select_model = SelectFromModel(LogisticRegression(C = 1,penalty = 'l2',solver = 'liblinear'), max_features = featurenum)
         select_model.fit(x_train, y_train)
-        selected_mask = select_model.get_support()
-        selected_columns = x_train.columns[selected_mask]
+        importances = np.sum(np.abs(select_model.estimator_.coef_), axis = 0)
+        importances_sort = np.sort(importances)
+        importances_high_lst = []
+        for i in range(len(importances)):
+            if importances[i] > importances_sort[-featurenum-1]:
+                importances_high_lst.append(i)
+        importances_high_sorted = sorted(importances_high_lst, key = lambda x: importances[x], reverse = True)
+        selected_columns = x_train.columns[importances_high_sorted]
+
         x_train = x_train.loc[:, selected_columns]
         x_val = x_val.loc[:, selected_columns]
 
     if fsmethod == 'regularization_elastic':
         select_model = SelectFromModel(LogisticRegression( penalty = 'elasticnet',solver = 'saga',l1_ratio = 0.5), max_features = featurenum)
         select_model.fit(x_train, y_train)
-        selected_mask = select_model.get_support()
-        selected_columns = x_train.columns[selected_mask]
+        importances = np.sum(np.abs(select_model.estimator_.coef_), axis = 0)
+        importances_sort = np.sort(importances)
+        importances_high_lst = []
+        for i in range(len(importances)):
+            if importances[i] > importances_sort[-featurenum-1]:
+                importances_high_lst.append(i)
+        importances_high_sorted = sorted(importances_high_lst, key = lambda x: importances[x], reverse = True)
+        selected_columns = x_train.columns[importances_high_sorted]
+
         x_train = x_train.loc[:, selected_columns]
         x_val = x_val.loc[:, selected_columns]
 
