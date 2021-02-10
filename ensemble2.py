@@ -73,7 +73,7 @@ def ensemble_model2(n_estimators, featurenum, seed, x_train = None, y_train = No
 
     # shap
     for j, fs in enumerate(fs_model_shap):
-        model = RandomForestClassifier(n_estimators = n_estimators, random_state = seed)
+        model = fs
         model.fit(x_train, y_train)
         explainer = shap.TreeExplainer(model)
         shap_values = explainer.shap_values(x_train)
@@ -89,7 +89,7 @@ def ensemble_model2(n_estimators, featurenum, seed, x_train = None, y_train = No
 
     # regularization
     for j, fs in enumerate(fs_model_regular):
-        select_model = SelectFromModel(LogisticRegression(C = 1,penalty = 'l1',solver = 'liblinear'), max_features = 1000)
+        select_model = fs
         select_model.fit(x_train, y_train)
         selected_mask = select_model.get_support()
         selected_columns = x_train.columns[selected_mask]

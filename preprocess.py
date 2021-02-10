@@ -30,7 +30,7 @@ from ensemble import ensemble_model
 
 # feature select
 def feature_select(fsmethod , featurenum , rfestep, seed, n_estimators, x_train = None, y_train =None, x_val = None):
-    if fsmethod == 'SelectKBest':
+    if fsmethod == 'SelectKBest_f':
         selector = SelectKBest(score_func = f_classif, k = featurenum)
         selector.fit(x_train, y_train)
         
@@ -47,8 +47,24 @@ def feature_select(fsmethod , featurenum , rfestep, seed, n_estimators, x_train 
         x_train = x_train.loc[:, selected_columns]
         x_val = x_val.loc[:, selected_columns]
 
-    if fsmethod == 'feature_importances':
-        #model = ExtraTreesClassifier()
+    if fsmethod == 'SelectKBest_chi2':
+        selector = SelectKBest(score_func = chi2, k = featurenum)
+        selector.fit(x_train, y_train)
+        
+        importances = selector.scores_
+        importances2 = np.nan_to_num(importances) # importance score nan 값 제거
+        importances_sort = np.sort(importances2)
+        importances_high_lst = []
+        for i in range(len(importances2)):
+            if importances2[i] > importances_sort[-featurenum-1]:
+                importances_high_lst.append(i)
+        importances_high_sorted = sorted(importances_high_lst, key = lambda x: importances2[x], reverse = True)
+        selected_columns = x_train.columns[importances_high_sorted]
+
+        x_train = x_train.loc[:, selected_columns]
+        x_val = x_val.loc[:, selected_columns]
+
+    if fsmethod == 'feature_importances_rf':
         model = RandomForestClassifier(n_estimators = n_estimators, random_state = seed)
         model.fit(x_train, y_train)
         importances = model.feature_importances_
@@ -62,17 +78,49 @@ def feature_select(fsmethod , featurenum , rfestep, seed, n_estimators, x_train 
         x_train = x_train.loc[:, selected_columns]
         x_val = x_val.loc[:, selected_columns]
 
+    if fsmethod == 'feature_importances_ext':
+        model = ExtraTreesClassifier(random_state = seed)
+        model.fit(x_train, y_train)
+        importances = model.feature_importances_
+        importances_sort = np.sort(importances)
+        importances_high_lst = []
+        for i in range(len(importances)):
+            if importances[i] > importances_sort[-featurenum-1]:
+                importances_high_lst.append(i)
+        selected_columns_lst = sorted(importances_high_lst, key = lambda x: importances[x], reverse = True)
+        selected_columns = x_train.columns[selected_columns_lst]
+        x_train = x_train.loc[:, selected_columns]
+        x_val = x_val.loc[:, selected_columns]
+     
+
         
-    if fsmethod == 'rfe':      # feature importance로 selected feature 정렬 불가능
-        model_lr = LogisticRegression()
-        #model_rf = RandomForestClassifier()
-        select_rfe = RFE(model_lr, n_features_to_select = featurenum, step = rfestep)
+    if fsmethod == 'rfe_log':      # feature importance로 selected feature 정렬 불가능
+        model_log = LogisticRegression(random_state = seed)
+        select_rfe = RFE(model_log, n_features_to_select = featurenum, step = rfestep)
         select_rfe.fit(x_train, y_train)
         selected_mask = select_rfe.support_
         selected_columns = x_train.columns[selected_mask]
         x_train = x_train.loc[:, selected_columns]
         x_val = x_val.loc[:, selected_columns]
 
+    if fsmethod == 'rfe_rf':      # feature importance로 selected feature 정렬 불가능
+        model_lr = RandomForestClassifier(random_state = seed)
+        select_rfe = RFE(model_lr, n_features_to_select = featurenum, step = rfestep)
+        select_rfe.fit(x_train, y_train)
+        selected_mask = select_rfe.support_
+        selected_columns = x_train.columns[selected_mask]
+        x_train = x_train.loc[:, selected_columns]
+        x_val = x_val.loc[:, selected_columns]
+    
+    if fsmethod == 'rfe_dt':      # feature importance로 selected feature 정렬 불가능
+        model_dt = DecisionTreeClassifier(random_state = seed)
+        select_rfe = RFE(model_dt, n_features_to_select = featurenum, step = rfestep)
+        select_rfe.fit(x_train, y_train)
+        selected_mask = select_rfe.support_
+        selected_columns = x_train.columns[selected_mask]
+        x_train = x_train.loc[:, selected_columns]
+        x_val = x_val.loc[:, selected_columns]
+    
 
     if fsmethod == 'pca':
         # pca 전 데이터 정규화   
