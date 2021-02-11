@@ -34,12 +34,11 @@ def ensemble_model2(n_estimators, featurenum, seed, x_train = None, y_train = No
                     RFE(LogisticRegression(random_state = seed), n_features_to_select=1000, step = 0.1), 
                     RFE(DecisionTreeClassifier(random_state = seed), n_features_to_select=1000, step=0.1)]
 
-    fs_model_shap = [RandomForestClassifier(random_state = seed, n_estimators = n_estimators),
-                    DecisionTreeClassifier(random_state = seed)]
-
-    fs_model_regular = [SelectFromModel(LogisticRegression(C = 1,penalty = 'l1',solver = 'liblinear'), max_features = featurenum),
-                        SelectFromModel(LogisticRegression(C = 1,penalty = 'l2',solver = 'liblinear'), max_features = featurenum),
-                        SelectFromModel(LogisticRegression( penalty = 'elasticnet',solver = 'saga', l1_ratio = 0.5), max_features = featurenum)]
+    fs_model_shap = [RandomForestClassifier(random_state = seed, n_estimators = n_estimators)]
+    
+    fs_model_regular = [SelectFromModel(LogisticRegression(C = 1,penalty = 'l1',solver = 'liblinear'), max_features = 1000),
+                        SelectFromModel(LogisticRegression(C = 1,penalty = 'l2',solver = 'liblinear'), max_features = 1000),
+                        SelectFromModel(LogisticRegression( penalty = 'elasticnet',solver = 'saga', l1_ratio = 0.5), max_features = 1000)]
     # tree importance
     for j,fs in enumerate(fs_model_tree):
         model = fs

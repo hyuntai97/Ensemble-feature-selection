@@ -26,10 +26,11 @@ from sklearn.linear_model import Lasso, LogisticRegression
 from sklearn.feature_selection import SelectFromModel
 from ensemble2 import ensemble_model2
 from ensemble import ensemble_model
-
+from ensemble2_resampling import ensemble2_model_resampling
+from ensemble1_resampling import ensemble1_model_resampling
 
 # feature select
-def feature_select(fsmethod , featurenum , rfestep, seed, n_estimators, x_train = None, y_train =None, x_val = None):
+def feature_select(fsmethod , featurenum , rfestep, seed, n_estimators, n_resampling, x_train = None, y_train =None, x_val = None):
     if fsmethod == 'SelectKBest_f':
         selector = SelectKBest(score_func = f_classif, k = featurenum)
         selector.fit(x_train, y_train)
@@ -225,7 +226,7 @@ def feature_select(fsmethod , featurenum , rfestep, seed, n_estimators, x_train 
 
     
     # feature select ensemble method
-    if fsmethod == 'ensemble':
+    if fsmethod == 'ensemble1':
         rank_high_idx = ensemble_model(n_estimators, featurenum, seed, x_train, y_train)
         x_train = x_train.loc[:, rank_high_idx]
         x_val = x_val.loc[:, rank_high_idx]
@@ -238,7 +239,22 @@ def feature_select(fsmethod , featurenum , rfestep, seed, n_estimators, x_train 
         x_val = x_val.loc[:, frequent_high_idx]
 
         selected_columns = frequent_high_idx
+    
+    # feature select ensemble & resampling method
+    if fsmethod == 'ensemble1_resampling':
+        rank_high_idx = ensemble1_model_resampling(n_resampling, n_estimators, featurenum, seed, x_train, y_train)
+        x_train = x_train.loc[:, rank_high_idx]
+        x_val = x_val.loc[:, rank_high_idx]
+        
+        selected_columns = rank_high_idx
 
+    if fsmethod == 'ensemble2_resampling':
+        frequent_high_idx = ensemble2_model_resampling(n_resampling, n_estimators, featurenum, seed, x_train, y_train)
+        x_train = x_train.loc[:, frequent_high_idx]
+        x_val = x_val.loc[:, frequent_high_idx]
+
+        selected_columns = frequent_high_idx
+    
 
     return x_train, x_val , selected_columns
 

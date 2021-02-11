@@ -59,16 +59,15 @@ if __name__=='__main__':
     parser.add_argument('--standardize', type=str, default = 'Standard', help ='Choice standardize method')
     parser.add_argument('--normalize', type=str, default = 'Normalizer', help ='Choice normalize method')
     parser.add_argument('--dataload', type=int, default = 1, help = 'Choice data loading method')
-    #parser.add_argument('--ensemble', type=int, default = 1, help = 'Choice feature selection ensemble method')
     parser.add_argument('--n_estimators', type=int, default=100, help = 'Set The number of trees in the forest')
     parser.add_argument('--colsdir', type=str, default='./cols', help='Set selected columns save directory')
-    #parser.add_argument('--regular_method', type=str, default='l1', help='Set regularization penalty')
+    parser.add_argument('--n_resampling', type=int, default=10, help='Set resampling count')
     args = parser.parse_args()
 
 models = {
-   "Ran":RandomForestClassifier(),
+   #"Ran":RandomForestClassifier(),
    #"KNN":KNeighborsClassifier(),
-   #"Log":LogisticRegression(),
+   "Log":LogisticRegression(),
    #"SVC":SVC(probability=True),
    #"Ada":AdaBoostClassifier(),
    #"GNB":GaussianNB(),
@@ -107,7 +106,7 @@ for train_idx,val_idx in skf.split(X,y_target):
     #x_train, x_val = standardize_select(args.standardize,x_train, x_val)
 
     # feature select
-    x_train, x_val, selected_columns = feature_select(args.fsmethod ,args.featurenum , args.rfestep, args.seed, args.n_estimators , x_train, y_train, x_val)
+    x_train, x_val, selected_columns = feature_select(args.fsmethod ,args.featurenum , args.rfestep, args.seed, args.n_estimators , args.n_resampling, x_train, y_train, x_val)
     
     # outlier replace
     x_train, x_val = replace_outlier(x_train, x_val)
