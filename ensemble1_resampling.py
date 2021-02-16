@@ -69,13 +69,13 @@ def ensemble1_model_resampling(n_resampling, n_estimators, featurenum, seed, x_t
             rank = importances_series.rank(ascending = False, method = 'min')
             rank_lst.append(rank)
 
-        for fs in fs_model_regular:
-            select_model = fs
-            select_model.fit(x_train_sample, y_train_sample)
-            importances = np.abs(select_model.estimator_.coef_)[0]
-            importances_series = pd.Series(importances)
-            rank = importances_series.rank(ascending = False, method = 'min')
-            rank_lst.append(rank)
+        # for fs in fs_model_regular:
+        #     select_model = fs
+        #     select_model.fit(x_train_sample, y_train_sample)
+        #     importances = np.abs(select_model.estimator_.coef_)[0]
+        #     importances_series = pd.Series(importances)
+        #     rank = importances_series.rank(ascending = False, method = 'min')
+        #     rank_lst.append(rank)
             
         
     rank_df = pd.concat(rank_lst, axis = 1)

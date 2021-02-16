@@ -38,8 +38,8 @@ def ensemble2_model_resampling(n_resampling, n_estimators, featurenum, seed, x_t
         fs_model_shap = [RandomForestClassifier(random_state = seed, n_estimators = n_estimators)]
 
         fs_model_regular = [SelectFromModel(LogisticRegression(C = 1,penalty = 'l1',solver = 'liblinear'), max_features = 800),
-                              SelectFromModel(LogisticRegression(C = 1,penalty = 'l2',solver = 'liblinear'), max_features = 800),
-                              SelectFromModel(LogisticRegression( penalty = 'elasticnet',solver = 'saga', l1_ratio = 0.5), max_features = 800)]
+                           SelectFromModel(LogisticRegression(C = 1,penalty = 'l2',solver = 'liblinear'), max_features = 800),
+                           SelectFromModel(LogisticRegression( penalty = 'elasticnet',solver = 'saga', l1_ratio = 0.5), max_features = 800)]
 
         # tree importance
         for j,fs in enumerate(fs_model_tree):
@@ -80,13 +80,13 @@ def ensemble2_model_resampling(n_resampling, n_estimators, featurenum, seed, x_t
             selected_columns = x_train.columns[importances_high_lst]
             selected_cols_dict[f'shap_{j}_{x}'] = selected_columns
 
-        # regularization
-        for j, fs in enumerate(fs_model_regular):
-            select_model = fs
-            select_model.fit(x_train_sample, y_train_sample)
-            selected_mask = select_model.get_support()
-            selected_columns = x_train.columns[selected_mask]
-            selected_cols_dict[f'regular_{j}_{x}'] = selected_columns
+        # # regularization
+        # for j, fs in enumerate(fs_model_regular):
+        #     select_model = fs
+        #     select_model.fit(x_train_sample, y_train_sample)
+        #     selected_mask = select_model.get_support()
+        #     selected_columns = x_train.columns[selected_mask]
+        #     selected_cols_dict[f'regular_{j}_{x}'] = selected_columns
 
     df_cols = pd.DataFrame(selected_cols_dict)
 
