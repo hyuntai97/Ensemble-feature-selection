@@ -28,7 +28,7 @@ from ensemble2 import ensemble_model2
 from ensemble import ensemble_model
 from ensemble2_resampling import ensemble2_model_resampling
 from ensemble1_resampling import ensemble1_model_resampling
-
+from resampling1_weight import ensemble1_resampling_weight
 # feature select
 def feature_select(fsmethod , featurenum , rfestep, seed, n_estimators, n_resampling, x_train = None, y_train =None, x_val = None):
     if fsmethod == 'SelectKBest_f':
@@ -254,7 +254,14 @@ def feature_select(fsmethod , featurenum , rfestep, seed, n_estimators, n_resamp
         x_val = x_val.loc[:, frequent_high_idx]
 
         selected_columns = frequent_high_idx
-    
+
+    # feature select ensemble & resampling & weighted rank method
+    if fsmethod == 'resampling1_weight':
+        rank_high_idx = ensemble1_resampling_weight(n_resampling, n_estimators, featurenum, seed, x_train , y_train) 
+        x_train = x_train.loc[:, rank_high_idx]
+        x_val = x_val.loc[:, rank_high_idx]
+
+        selected_columns = rank_high_idx
 
     return x_train, x_val , selected_columns
 

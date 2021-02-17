@@ -25,7 +25,7 @@ from sklearn.feature_selection import SelectFromModel
 def ensemble2_model_resampling(n_resampling, n_estimators, featurenum, seed, x_train = None, y_train = None):
     selected_cols_dict = {}
     for x in range(n_resampling):
-        sample = np.random.choice(x_train.shape[0],200)
+        sample = np.random.choice(x_train.shape[0], 200, replace = False)
         x_train_sample = x_train.iloc[sample, :]
         y_train_sample = y_train.iloc[sample]
         

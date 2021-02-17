@@ -65,12 +65,12 @@ if __name__=='__main__':
     args = parser.parse_args()
 
 models = {
-   #"Ran":RandomForestClassifier(),
+   "Ran":RandomForestClassifier(),
    #"KNN":KNeighborsClassifier(),
    #"Log":LogisticRegression(),
    #"SVC":SVC(probability=True),
    #"Ada":AdaBoostClassifier(),
-   "GNB":GaussianNB(),
+   #"GNB":GaussianNB(),
    #"Bag":BaggingClassifier(),
    #"XGB":XGBClassifier(),
    #"LGB":LGBMClassifier()
