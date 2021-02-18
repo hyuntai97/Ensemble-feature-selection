@@ -61,7 +61,7 @@ def ensemble1_resampling_weight(n_resampling, n_estimators, featurenum, seed, x_
             y_pred_val = model.predict(x_train_val_high)
             accuracy_val = accuracy_score(y_train_val, y_pred_val)
             # weighted rank (클수록 높은 importance)
-            weighted_rank = rank**2 * accuracy_val**2
+            weighted_rank = rank * accuracy_val**2
 
             weighted_rank_lst.append(weighted_rank)
 
@@ -82,7 +82,7 @@ def ensemble1_resampling_weight(n_resampling, n_estimators, featurenum, seed, x_
             y_pred_val = model.predict(x_train_val_high)
             accuracy_val = accuracy_score(y_train_val, y_pred_val)
             # weighted rank (클수록 높은 importance)
-            weighted_rank = rank**2 * accuracy_val**2
+            weighted_rank = rank * accuracy_val**2
 
             weighted_rank_lst.append(weighted_rank)
 
