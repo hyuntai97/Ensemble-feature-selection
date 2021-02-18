@@ -46,13 +46,7 @@ if __name__=='__main__':
     parser.add_argument('--logdir', type=str, default='./logs', help='Set log directory')
     parser.add_argument('--savedir', type=str, default='./save', help='Set arguments directory')
     parser.add_argument('--paramdir', type=str, default='./params', help='Set parameters directory')
-    #parser.add_argument('--preprocess', type=int, default=1, help='Select preprocessing method')
-    #parser.add_argument('--val_size', type=float, default=None, help='Set validation size')
     parser.add_argument('--kfold', type=int, default=5, help='Number of cross validation')
-    #parser.add_argument('--params', type=str, default='default', help='Model hyperparmeter')
-    #parser.add_argument('--modelname', type=str, 
-    #                     choices=['OLS','Ridge','Lasso','ElasticNet','DT','RF','ADA','GT','SVM','KNN','LGB'],
-    #                     help='Choice machine learning model')
     parser.add_argument('--fsmethod', type=str, default ='SelectKBest_f', help ='Choice feature select method')
     parser.add_argument('--featurenum', type=int, default =100, help ='Set feature selected number')
     parser.add_argument('--rfestep', type=float, default = 0.005, help ='Set rfe step')
@@ -65,13 +59,13 @@ if __name__=='__main__':
     args = parser.parse_args()
 
 models = {
-   "Ran":RandomForestClassifier(),
+   #"Ran":RandomForestClassifier(),
    #"KNN":KNeighborsClassifier(),
    #"Log":LogisticRegression(),
    #"SVC":SVC(probability=True),
    #"Ada":AdaBoostClassifier(),
    #"GNB":GaussianNB(),
-   #"Bag":BaggingClassifier(),
+   "Bag":BaggingClassifier(),
    #"XGB":XGBClassifier(),
    #"LGB":LGBMClassifier()
 }
