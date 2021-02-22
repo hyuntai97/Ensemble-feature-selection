@@ -3,17 +3,38 @@ import numpy as np
 from numpy import isnan
 import os 
 
-
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import RobustScaler
+from sklearn.preprocessing import Normalizer
+from sklearn.preprocessing import MinMaxScaler
 
 def dataloader(datadir,dataload):
     data = pd.read_csv(os.path.join(datadir, f'LUADLUSC_float32.tsv'),sep = '\t')
     data_copy = data.copy()
     data_copy.set_index('sample', inplace = True)
+
+    # dataload시에 전체데이터 로그변환 -> 전체데이터 scaling
     if dataload == 1:
         X = data_copy.iloc[:,:-1]
         y_target = data_copy.iloc[:,-1]
-    
-    elif dataload == 2:  # c4 computational gene set 사용해서 feature 개수 줄이는 방법 
+
+        X_columns = X.columns
+        X_index = X.index
+
+        # log 변환
+        X = X.apply(np.log1p)
+
+        # Standard scaling
+        scaler = Normalizer()
+        scaler.fit(X)
+        X = scaler.transform(X)
+        X = pd.DataFrame(X, columns = X_columns, index = X_index)
+
+    elif dataload == 2:
+        X = data_copy.iloc[:,:-1]
+        y_target = data_copy.iloc[:,-1]
+
+    elif dataload == 3:  # c4 computational gene set 사용해서 feature 개수 줄이는 방법 
         data_gene = pd.read_csv(os.path.join(datadir, f'c4_entrez.gmt.txt'),sep = '\t', engine = 'python' , header = None, index_col = 0, error_bad_lines = False)
         data_gene.drop(1, axis = 1, inplace = True)
         data_gene.fillna(0, inplace = True)

@@ -103,14 +103,13 @@ for train_idx,val_idx in skf.split(X,y_target):
     x_train, x_val, selected_columns = feature_select(args.fsmethod ,args.featurenum , args.rfestep, args.seed, args.n_estimators , args.n_resampling, x_train, y_train, x_val)
     
     # outlier replace
-    x_train, x_val = replace_outlier(x_train, x_val)
+    #x_train, x_val = replace_outlier(x_train, x_val)
 
     # feature normalize
-    x_train, x_val = normalize_select(args.normalize,x_train, x_val)
-
+    #x_train, x_val = normalize_select(args.normalize,x_train, x_val)
 
     # sample generate
-    x_train, y_train = sample_generate(x_train, y_train)
+    #x_train, y_train = sample_generate(x_train, y_train)
 
     # model training
     model = model.fit(x_train, y_train)
