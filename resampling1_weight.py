@@ -24,6 +24,7 @@ from sklearn.feature_selection import SelectFromModel
 from sklearn.metrics import accuracy_score
 
 def ensemble1_resampling_weight(n_resampling, n_estimators, featurenum, seed, x_train = None, y_train = None):
+    np.random.seed(seed = seed) # seed값 설정
     model = RandomForestClassifier()
     weighted_rank_lst = []
     for i in range(n_resampling):
