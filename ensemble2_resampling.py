@@ -33,13 +33,13 @@ def ensemble2_model_resampling(n_resampling, n_estimators, featurenum, seed, x_t
         fs_model_tree = [RandomForestClassifier(random_state = seed, n_estimators = n_estimators),
                           ExtraTreesClassifier(random_state = seed, n_estimators = n_estimators)]
 
-        fs_model_kb = [SelectKBest(chi2, k = 800), SelectKBest(f_classif, k = 800)]
+        fs_model_kb = [SelectKBest(chi2, k = 400), SelectKBest(f_classif, k = 400)]
 
         fs_model_shap = [RandomForestClassifier(random_state = seed, n_estimators = n_estimators)]
 
-        fs_model_regular = [SelectFromModel(LogisticRegression(C = 1,penalty = 'l1',solver = 'liblinear'), max_features = 800),
-                           SelectFromModel(LogisticRegression(C = 1,penalty = 'l2',solver = 'liblinear'), max_features = 800),
-                           SelectFromModel(LogisticRegression( penalty = 'elasticnet',solver = 'saga', l1_ratio = 0.5), max_features = 800)]
+        # fs_model_regular = [SelectFromModel(LogisticRegression(C = 1,penalty = 'l1',solver = 'liblinear'), max_features = 800),
+        #                    SelectFromModel(LogisticRegression(C = 1,penalty = 'l2',solver = 'liblinear'), max_features = 800),
+        #                    SelectFromModel(LogisticRegression( penalty = 'elasticnet',solver = 'saga', l1_ratio = 0.5), max_features = 800)]
 
         # tree importance
         for j,fs in enumerate(fs_model_tree):
@@ -50,7 +50,7 @@ def ensemble2_model_resampling(n_resampling, n_estimators, featurenum, seed, x_t
             importances_sort = np.sort(importances)
             importances_high_lst = []
             for i in range(len(importances)):
-                if importances[i] > importances_sort[-800-1]:
+                if importances[i] > importances_sort[-400-1]:
                     importances_high_lst.append(i)
                     selected_columns = x_train.columns[importances_high_lst]
 
@@ -75,7 +75,7 @@ def ensemble2_model_resampling(n_resampling, n_estimators, featurenum, seed, x_t
             shap_mean_sort = np.sort(shap_mean)
             importances_high_lst = []
             for i in range(len(shap_mean)):
-                if shap_mean[i] > shap_mean_sort[-800-1]:
+                if shap_mean[i] > shap_mean_sort[-400-1]:
                     importances_high_lst.append(i)
             selected_columns = x_train.columns[importances_high_lst]
             selected_cols_dict[f'shap_{j}_{x}'] = selected_columns

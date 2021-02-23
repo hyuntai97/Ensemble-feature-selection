@@ -62,10 +62,10 @@ models = {
    #"Ran":RandomForestClassifier(),
    #"KNN":KNeighborsClassifier(),
    #"Log":LogisticRegression(),
-   #"SVC":SVC(probability=True),
+   "SVC":SVC(probability=True),
    #"Ada":AdaBoostClassifier(),
    #"GNB":GaussianNB(),
-   "Bag":BaggingClassifier(),
+   #"Bag":BaggingClassifier(),
    #"XGB":XGBClassifier(),
    #"LGB":LGBMClassifier()
 }

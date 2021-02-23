@@ -87,12 +87,12 @@ def ensemble_model2(n_estimators, featurenum, seed, x_train = None, y_train = No
         selected_cols_dict[f'shap_{j}'] = selected_columns
 
     # regularization
-    for j, fs in enumerate(fs_model_regular):
-        select_model = fs
-        select_model.fit(x_train, y_train)
-        selected_mask = select_model.get_support()
-        selected_columns = x_train.columns[selected_mask]
-        selected_cols_dict[f'regular_{j}'] = selected_columns
+    # for j, fs in enumerate(fs_model_regular):
+    #     select_model = fs
+    #     select_model.fit(x_train, y_train)
+    #     selected_mask = select_model.get_support()
+    #     selected_columns = x_train.columns[selected_mask]
+    #     selected_cols_dict[f'regular_{j}'] = selected_columns
 
     df_cols = pd.DataFrame(selected_cols_dict)
     
