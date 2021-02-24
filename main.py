@@ -54,18 +54,18 @@ if __name__=='__main__':
     parser.add_argument('--normalize', type=str, default = 'Normalizer', help ='Choice normalize method')
     parser.add_argument('--dataload', type=int, default = 1, help = 'Choice data loading method')
     parser.add_argument('--n_estimators', type=int, default=100, help = 'Set The number of trees in the forest')
-    parser.add_argument('--colsdir', type=str, default='./cols', help='Set selected columns save directory')
+    parser.add_argument('--colsdir', type=str, default='./cols', help='Set Directory in which the selected column is stored')
     parser.add_argument('--n_resampling', type=int, default=10, help='Set resampling count')
     args = parser.parse_args()
 
 models = {
    #"Ran":RandomForestClassifier(),
-   "KNN":KNeighborsClassifier(),
+   #"KNN":KNeighborsClassifier(),
    #"Log":LogisticRegression(),
    #"SVC":SVC(probability=True),
    #"Ada":AdaBoostClassifier(),
    #"GNB":GaussianNB(),
-   #"Bag":BaggingClassifier(),
+   "Bag":BaggingClassifier(),
    #"XGB":XGBClassifier(),
    #"LGB":LGBMClassifier()
 }

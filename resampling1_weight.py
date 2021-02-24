@@ -46,6 +46,7 @@ def ensemble1_resampling_weight(n_resampling, n_estimators, featurenum, seed, x_
 
         fs_model_shap = [RandomForestClassifier(random_state = seed, n_estimators = n_estimators)]
 
+    
         # tree based (weighted rank)
         for fs in fs_model_tree:
             fs_model = fs
@@ -87,6 +88,7 @@ def ensemble1_resampling_weight(n_resampling, n_estimators, featurenum, seed, x_
 
             weighted_rank_lst.append(weighted_rank)
 
+        # shap
         for fs in fs_model_shap:
             fs_model = fs
             fs_model.fit(x_train_sample, y_train_sample)
