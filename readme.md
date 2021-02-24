@@ -126,4 +126,24 @@ model = model.fit(x_train, y_train)
     
 ```
 
+## preprocess.py
+
+```python
+def feature_select(**kwargs):
+    pass
+
+def get_outlier(**kwargs):
+    pass
+
+def get_outlier_test2(**kwargs):
+    pass
+
+def replace_outlier(**kwargs):
+    pass
+    
+def sample_generate(**kwargs):
+    pass
+    
+```
+
 
