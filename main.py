@@ -60,9 +60,9 @@ if __name__=='__main__':
 
 models = {
    #"Ran":RandomForestClassifier(),
-   #"KNN":KNeighborsClassifier(),
+   "KNN":KNeighborsClassifier(),
    #"Log":LogisticRegression(),
-   "SVC":SVC(probability=True),
+   #"SVC":SVC(probability=True),
    #"Ada":AdaBoostClassifier(),
    #"GNB":GaussianNB(),
    #"Bag":BaggingClassifier(),
